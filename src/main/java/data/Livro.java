@@ -10,7 +10,7 @@ public class Livro {
 		this.autor = autor;
 		this.setEditora(null);
 	}
-	
+
 	public Livro(String titulo, Autor autor, Editora editora) {
 		this.titulo = titulo;
 		this.autor = autor;
@@ -27,6 +27,14 @@ public class Livro {
 
 	public Editora getEditora() {
 		return editora;
+	}
+	
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
+	public void setAutor(Autor autor) {
+		this.autor = autor;
 	}
 
 	public void setEditora(Editora editora) {
