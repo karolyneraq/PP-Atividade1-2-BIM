@@ -11,7 +11,8 @@ public class ServicoLivro extends Servicos{
     private ArrayList<Editora> editoras;
 
     public boolean Cadastrar(String titulo, String nomeAutor){
-        Autor autorLivro;
+        Autor autorLivro = null;
+        
         for (Livro livro : livros){
             if (livro.getTitulo().equals(titulo)){
                 return false;
@@ -33,8 +34,8 @@ public class ServicoLivro extends Servicos{
     }
 
     public boolean Cadastrar(String titulo, String nomeAutor, String nomeEditora){
-        Autor autorLivro;
-        Editora editoraLivro;
+        Autor autorLivro = null;
+        Editora editoraLivro = null;
 
         for (Livro livro : livros){
             if (livro.getTitulo().equals(titulo)){

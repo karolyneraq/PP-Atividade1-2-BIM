@@ -3,8 +3,6 @@ package bussiness;
 import java.util.ArrayList;
 
 import data.Livro;
-import data.Autor;
-import data.Editora;
 
 abstract public class Servicos {
     public Servicos(){}
