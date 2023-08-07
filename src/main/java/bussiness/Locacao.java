@@ -1,7 +1,9 @@
+import java.util.ArrayList;
+
 public interface Locacao{
     String locacaoAtual = "";
 
-    public void SolicitarLocacao(String nomeLivro);
+    public boolean SolicitarLocacao(String nomeLivro);
     public String AcompanharLocacao();
-    public void VerHistorico();
+    public ArrayList<String> VerHistorico();
 }

@@ -4,11 +4,15 @@ public class EmprestimoService implements Locacao{
     private String emprestimoAtual;
     private ArrayList<String> emprestimos;
 
-    public void SolicitarLocacao(String nomeLivro){
-        
+    public boolean SolicitarLocacao(String nomeLivro){
+        return true;
     }
 
-    public void AcompanharLocacao(){}
+    public String AcompanharLocacao(){
+        return emprestimoAtual;
+    }
 
-    public void VerHistorico(){}
+    public ArrayList<String> VerHistorico(){
+        return this.emprestimos;
+    }
 }
