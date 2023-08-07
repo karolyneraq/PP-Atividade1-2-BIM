@@ -1,13 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package bussiness;
+import java.util.ArrayList;
 
-/**
- *
- * @author karol
- */
-public class EmprestimoService {
-    
+public class EmprestimoService implements Locacao{
+    private String emprestimoAtual;
+    private ArrayList<String> emprestimos;
+
+    public void SolicitarLocacao(String nomeLivro){
+        
+    }
+
+    public void AcompanharLocacao(){}
+
+    public void VerHistorico(){}
 }

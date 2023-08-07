@@ -1,13 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package bussiness;
+import java.util.ArrayList;
 
-/**
- *
- * @author karol
- */
-public class ReservaService {
-    
+public class ReservaService implements Locacao{
+    private String reservaAtual;
+    private ArrayList<String> reservas;
+
+    public void SolicitarLocacao(String nomeLivro){
+        System.out.println("Reserva do livro " + nomeLivro + "concluída.");
+    }
+
+    public void AcompanharLocacao(){
+        System.out.println("Você reservou o livro: " + reservaAtual);
+    }
+
+    public void VerHistorico(){
+        for (String reserva : reservas){
+            System.out.println("Reservou o livro: " + reserva);
+        }
+    }
 }
