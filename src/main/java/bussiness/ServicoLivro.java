@@ -1,25 +1,25 @@
 package bussiness;
 
 import java.util.ArrayList;
-import data.Livro;
+
 import data.Autor;
+import data.Livro;
 import data.Editora;
+import data.Persistencia;
 
-public class ServicoLivro extends Servicos{
+public class ServicoLivro extends Servico{
     private ArrayList<Livro> livros;
-    private ArrayList<Autor> autores;
-    private ArrayList<Editora> editoras;
-
-    public boolean Cadastrar(String titulo, String nomeAutor){
+    
+    public boolean Cadastrar(String titulo, String nomeAutor, ServicoAutor sa){
         Autor autorLivro = null;
         
-        for (Livro livro : livros){
+        for (Livro livro : this.livros){
             if (livro.getTitulo().equals(titulo)){
                 return false;
             }
         }
 
-        for (Autor autor : autores){
+        for (Autor autor : sa.Visualizar()){
             if (autor.getNome().equals(nomeAutor)){
                 autorLivro = autor;
             }
@@ -27,29 +27,30 @@ public class ServicoLivro extends Servicos{
 
         if (autorLivro == null){
             autorLivro = new Autor(nomeAutor);
+            sa.Cadastrar(nomeAutor);
         }
         
-        autorLivro.adicionarLivro(titulo);
+        livros.add(autorLivro.adicionarLivro(titulo));
         return true;
     }
 
-    public boolean Cadastrar(String titulo, String nomeAutor, String nomeEditora){
+    public boolean Cadastrar(String titulo, String nomeAutor, ServicoAutor sa, String nomeEditora, ServicoEditora se){
         Autor autorLivro = null;
         Editora editoraLivro = null;
 
-        for (Livro livro : livros){
+        for (Livro livro : this.livros){
             if (livro.getTitulo().equals(titulo)){
                 return false;
             }
         }
 
-        for (Autor autor : autores){
+        for (Autor autor : sa.Visualizar()){
             if (autor.getNome().equals(nomeAutor)){
                 autorLivro = autor;
             }
         }
 
-        for (Editora editora : editoras){
+        for (Editora editora : se.Visualizar()){
             if (editora.getNome().equals(nomeEditora)){
                 editoraLivro = editora;
             }
@@ -57,9 +58,11 @@ public class ServicoLivro extends Servicos{
 
         if (autorLivro == null){
             autorLivro = new Autor(nomeAutor);
+            sa.Cadastrar(nomeAutor);
         }
         if (editoraLivro == null){
             editoraLivro = new Editora(nomeEditora);
+            se.Cadastrar(nomeEditora);
         }
 
         autorLivro.adicionarLivroEditora(titulo, editoraLivro);
@@ -67,7 +70,7 @@ public class ServicoLivro extends Servicos{
     }
 
     public boolean Atualizar(String nomeAtual, String novoNome){
-        for (Livro livro : livros){
+        for (Livro livro : this.livros){
             if (livro.getTitulo().equals(nomeAtual)){
                 livro.setTitulo(novoNome);
                 return true;
@@ -78,9 +81,9 @@ public class ServicoLivro extends Servicos{
     }
 
     public boolean Remover(String nome){
-        for (Livro livro : livros){
+        for (Livro livro : this.livros){
             if (livro.getTitulo().equals(nome)){
-                livros.remove(livro);
+                this.livros.remove(livro);
                 return true;
             }
         }
@@ -90,5 +93,21 @@ public class ServicoLivro extends Servicos{
 
     public ArrayList<Livro> Visualizar(){
         return this.livros;
+    }
+
+    public ArrayList<Livro> Buscar(String busca){
+        ArrayList<Livro> livrosBuscados = new ArrayList<Livro>();
+        
+        for (Livro livro : this.livros){
+            if (livro.getTitulo().contains(busca)){
+                livrosBuscados.add(livro);
+            }
+        }
+
+        return livrosBuscados;
+    }
+
+    public void Carregar(ServicoAutor sa, ServicoEditora se){
+        this.livros.addAll(Persistencia.loadLivros(sa.Visualizar(), se.Visualizar()));
     }
 }
