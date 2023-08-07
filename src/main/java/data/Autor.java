@@ -27,12 +27,16 @@ public class Autor {
 		livros.add(new Livro(nome, this));
 	}
 	
-	public void adicionarLivroEditora(String nome, Editora editora) {
-		livros.add(new Livro(nome, this, editora));
+	public Livro adicionarLivro(String nome) {
+		Livro livro = new Livro(nome, this);
+		livros.add(livro);
+		return livro;
 	}
-
-	public void removerLivro(Livro livro) {
-		livros.remove(livro);
+	
+	public Livro adicionarLivroEditora(String nome, Editora editora) {
+		Livro livro = new Livro(nome, this, editora);
+		livros.add(livro);
+		return livro;
 	}
 
 	public void listarLivros(){
