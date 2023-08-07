@@ -24,6 +24,10 @@ public class Editora {
 		livro.setEditora(this);
 		this.livros.add(livro);
 	}
+
+	public void adicionarLivroEditora(String nome, Editora editora) {
+		livros.add(new Livro(nome, this, editora));
+	}
 	
 	public void removerLivro(Livro livro) {
 		livro.setEditora(null);
