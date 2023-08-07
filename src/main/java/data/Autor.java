@@ -4,21 +4,19 @@ import java.util.ArrayList;
 
 public class Autor {
 	private String nome;
-	private String nacionalidade;
 	private ArrayList<Livro> livros;
 
-	public Autor(String nome, String nacionalidade) {
+	public Autor(String nome) {
 		this.nome = nome;
-		this.nacionalidade = nacionalidade;
 		this.livros = new ArrayList<>();
+	}
+	
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	public String getNome() {
 		return nome;
-	}
-
-	public String getNacionalidade() {
-		return nacionalidade;
 	}
 
 	public ArrayList<Livro> getLivros() {
@@ -27,6 +25,10 @@ public class Autor {
 
 	public void adicionarLivro(String nome) {
 		livros.add(new Livro(nome, this));
+	}
+	
+	public void adicionarLivroEditora(String nome, Editora editora) {
+		livros.add(new Livro(nome, this, editora));
 	}
 
 	public void removerLivro(Livro livro) {
@@ -50,5 +52,4 @@ public class Autor {
 			System.out.println("O autor " + this.getNome() + " ainda não escreveu nenhum livro");
 		}
 	}
-	
 }
