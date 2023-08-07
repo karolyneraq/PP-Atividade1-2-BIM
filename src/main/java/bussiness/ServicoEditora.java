@@ -7,6 +7,8 @@ import data.Persistencia;
 
 public class ServicoEditora extends Servico{
     private ArrayList<Editora> editoras;
+
+    public ServicoEditora(){}
     
     public boolean Cadastrar(String nome){
         for (Editora editora : this.editoras){

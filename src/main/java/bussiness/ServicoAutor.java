@@ -8,6 +8,8 @@ import data.Persistencia;
 public class ServicoAutor extends Servico{
     private ArrayList<Autor> autores;
     
+    public ServicoAutor(){}
+
     public boolean Cadastrar(String nomeAutor){
         for (Autor autor : this.autores){
             if (autor.getNome().equals(nomeAutor)){

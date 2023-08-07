@@ -9,6 +9,8 @@ import data.Persistencia;
 
 public class ServicoLivro extends Servico{
     private ArrayList<Livro> livros;
+
+    public ServicoLivro(){}
     
     public boolean Cadastrar(String titulo, String nomeAutor, ServicoAutor sa){
         Autor autorLivro = null;
