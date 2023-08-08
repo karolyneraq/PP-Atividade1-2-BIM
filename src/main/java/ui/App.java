@@ -10,6 +10,10 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import javax.swing.*;
 
+import bussiness.ServicoLivro;
+import bussiness.ServicoEditora;
+import bussiness.ServicoAutor;
+
 /**
  *
  * @author karol
@@ -137,6 +141,12 @@ public class App extends javax.swing.JFrame {
         livroVisuWindow();
     }
     
+    private void btnLivroAtActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        livroAtWindow();
+    }
+    
     private void btnCadLivroActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
@@ -149,11 +159,30 @@ public class App extends javax.swing.JFrame {
         } else if (tituloLivro.equals("")) {
             JOptionPane.showMessageDialog(null, "Preencha o campo título!");
         } else {
+            if(editoraLivro.equals("")){
+                 this.servicoLivro.Cadastrar(tituloLivro, autorLivro);
+            }
+            else{
+                this.servicoLivro.Cadastrar(tituloLivro, autorLivro, editoraLivro);
+            }
             JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
             removeFromWindowMenuGroup();
             livrosWindow();
         }
+    }
+    
+    private void btnAtLivroActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
 
+        String tituloLivro = this.inputTituloAtLivro.getText();
+
+        if (tituloLivro.equals("")) {
+            JOptionPane.showMessageDialog(null, "Preencha o campo autor!");
+        } else {
+            JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+            removeFromWindowMenuGroup();
+            livrosWindow();
+        }
     }
 
     /*Botões de ações dos autores*/
@@ -316,6 +345,10 @@ public class App extends javax.swing.JFrame {
         });
 
         this.btnLivroAt.setText("Atualizar Livro");
+        btnLivroAt.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnLivroAtActionPerformed(evt);
+        });
+        
         this.btnLivroRem.setText("Remover Livro");
         
         this.btnLivroVisu.setText("Visualizar Livro");
@@ -506,6 +539,74 @@ public class App extends javax.swing.JFrame {
                                 .addGap(30, 30, 30)
                                 .addComponent(scrollBarExibirLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(50, 50, 50))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }
+    
+    public void livroAtWindow(){
+        labelAtLivro = new javax.swing.JLabel();
+        labelTituloAtLivro = new javax.swing.JLabel();
+        inputTituloAtLivro = new javax.swing.JTextField();
+        
+        btnAtLivro = new javax.swing.JButton();
+        
+        btnAtLivro.setText("Procurar");
+        btnAtLivro.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnAtLivroActionPerformed(evt);
+        });
+        
+        labelAtLivro.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        labelAtLivro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelAtLivro.setText("Atualizar Livro");
+        
+        labelTituloAtLivro.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelTituloAtLivro.setText("Título");
+        
+        javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
+        tela.setLayout(telaLayout);
+        telaLayout.setHorizontalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addComponent(labelAtLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(50, 50, 50)
+                                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(inputTituloAtLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelTituloAtLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                ).addGap(50, 50, 50))
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(220, 220, 220)
+                                                .addComponent(btnAtLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                )
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        telaLayout.setVerticalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, telaLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(labelAtLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(30, 30, 30)
+                                .addComponent(labelTituloAtLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(40, 40, 40)
+                                .addComponent(inputTituloAtLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(50, 50, 50)
+                                .addComponent(btnAtLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(70, 70, 70))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -721,6 +822,8 @@ public class App extends javax.swing.JFrame {
 
         pack();
     }
+    
+    /*Editora */
     
     public void editorasWindow() {
         this.btnEditoraCad = new javax.swing.JButton();
@@ -1222,6 +1325,12 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollBarExibirLivro;
     private javax.swing.JTextArea areaTextExibirLivro;
     
+    //Atualizar
+    private javax.swing.JLabel labelAtLivro;
+    private javax.swing.JLabel labelTituloAtLivro;
+    private javax.swing.JTextField inputTituloAtLivro;
+    private javax.swing.JButton btnAtLivro;
+    
     /*Autor opções*/
     //Cadastrar
     private javax.swing.JTextField inputNomeAutor;
@@ -1245,4 +1354,9 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel labelExibirEditora;
     private javax.swing.JScrollPane scrollBarExibirEditora;
     private javax.swing.JTextArea areaTextExibirEditora;
+    
+    /*Serviços Objetos*/
+    private ServicoAutor servicoAutor = new ServicoAutor();
+    private ServicoEditora servicoEditora = new ServicoEditora();
+    private ServicoLivro servicoLivro = new ServicoLivro(servicoAutor, servicoEditora);
 }
