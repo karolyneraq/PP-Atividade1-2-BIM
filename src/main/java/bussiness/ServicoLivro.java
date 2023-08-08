@@ -9,10 +9,15 @@ import data.Persistencia;
 
 public class ServicoLivro extends Servico{
     private ArrayList<Livro> livros;
+    private ServicoAutor sa;
+    private ServicoEditora se;
 
-    public ServicoLivro(){}
+    public ServicoLivro(ServicoAutor sa, ServicoEditora se){
+        this.sa = sa;
+        this.se = se;
+    }
     
-    public boolean Cadastrar(String titulo, String nomeAutor, ServicoAutor sa){
+    public boolean Cadastrar(String titulo, String nomeAutor){
         Autor autorLivro = null;
         
         for (Livro livro : this.livros){
@@ -29,14 +34,14 @@ public class ServicoLivro extends Servico{
 
         if (autorLivro == null){
             autorLivro = new Autor(nomeAutor);
-            sa.Cadastrar(nomeAutor);
+            this.sa.Cadastrar(nomeAutor);
         }
         
         livros.add(autorLivro.adicionarLivro(titulo));
         return true;
     }
 
-    public boolean Cadastrar(String titulo, String nomeAutor, ServicoAutor sa, String nomeEditora, ServicoEditora se){
+    public boolean Cadastrar(String titulo, String nomeAutor, String nomeEditora){
         Autor autorLivro = null;
         Editora editoraLivro = null;
 
@@ -46,13 +51,13 @@ public class ServicoLivro extends Servico{
             }
         }
 
-        for (Autor autor : sa.Visualizar()){
+        for (Autor autor : this.sa.Visualizar()){
             if (autor.getNome().equals(nomeAutor)){
                 autorLivro = autor;
             }
         }
 
-        for (Editora editora : se.Visualizar()){
+        for (Editora editora : this.se.Visualizar()){
             if (editora.getNome().equals(nomeEditora)){
                 editoraLivro = editora;
             }
@@ -60,11 +65,11 @@ public class ServicoLivro extends Servico{
 
         if (autorLivro == null){
             autorLivro = new Autor(nomeAutor);
-            sa.Cadastrar(nomeAutor);
+            this.sa.Cadastrar(nomeAutor);
         }
         if (editoraLivro == null){
             editoraLivro = new Editora(nomeEditora);
-            se.Cadastrar(nomeEditora);
+            this.se.Cadastrar(nomeEditora);
         }
 
         autorLivro.adicionarLivroEditora(titulo, editoraLivro);
@@ -75,6 +80,7 @@ public class ServicoLivro extends Servico{
         for (Livro livro : this.livros){
             if (livro.getTitulo().equals(nomeAtual)){
                 livro.setTitulo(novoNome);
+                this.Salvar();
                 return true;
             }
         }
@@ -86,6 +92,8 @@ public class ServicoLivro extends Servico{
         for (Livro livro : this.livros){
             if (livro.getTitulo().equals(nome)){
                 this.livros.remove(livro);
+                livro.getAutor().removerLivro(livro);
+                this.Salvar();
                 return true;
             }
         }
@@ -109,7 +117,11 @@ public class ServicoLivro extends Servico{
         return livrosBuscados;
     }
 
-    public void Carregar(ServicoAutor sa, ServicoEditora se){
-        this.livros.addAll(Persistencia.loadLivros(sa.Visualizar(), se.Visualizar()));
+    public void Carregar(){
+        this.livros.addAll(Persistencia.loadLivros(this.sa.Visualizar(), this.se.Visualizar()));
+    }
+
+    public void Salvar(){
+        Persistencia.saveLivros(this.sa.Visualizar());
     }
 }

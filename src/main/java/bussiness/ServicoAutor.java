@@ -17,7 +17,8 @@ public class ServicoAutor extends Servico{
             }
         }
 
-        new Autor(nomeAutor);
+        this.autores.add(new Autor(nomeAutor));
+        this.Salvar();
         return true;
     }
 
@@ -25,6 +26,7 @@ public class ServicoAutor extends Servico{
         for (Autor autor : this.autores){
             if (autor.getNome().equals(nomeAtual)){
                 autor.setNome(novoNome);
+                this.Salvar();
                 return true;
             }
         }
@@ -36,6 +38,7 @@ public class ServicoAutor extends Servico{
         for (Autor autor : this.autores){
             if (autor.getNome().equals(nome)){
                 this.autores.remove(autor);
+                this.Salvar();
                 return true;
             }
         }
@@ -61,5 +64,9 @@ public class ServicoAutor extends Servico{
 
     public void Carregar(){
         this.autores.addAll(Persistencia.loadAutores());
+    }
+
+    public void Salvar(){
+        Persistencia.saveAutores(autores);
     }
 }
