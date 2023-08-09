@@ -13,6 +13,8 @@ import javax.swing.*;
 import bussiness.ServicoLivro;
 import bussiness.ServicoEditora;
 import bussiness.ServicoAutor;
+import bussiness.LocacaoEmprestimo;
+import bussiness.LocacaoReserva;
 
 /**
  *
@@ -25,7 +27,9 @@ public class App extends javax.swing.JFrame {
      */
     public App() {
         initComponents();
-
+        this.servicoAutor.Carregar();
+        this.servicoEditora.Carregar();
+        this.servicoLivro.Carregar();
     }
 
     /**
@@ -147,12 +151,20 @@ public class App extends javax.swing.JFrame {
         livroAtWindow();
     }
     
+    private void btnLivroRemActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        livroRemWindow();
+    }
+    
     private void btnCadLivroActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
         String autorLivro = this.inputAutor.getText();
         String tituloLivro = this.inputTitulo.getText();
         String editoraLivro = this.inputEditora.getText();
+        
+        boolean cadastrado;
 
         if (autorLivro.equals("")) {
             JOptionPane.showMessageDialog(null, "Preencha o campo autor!");
@@ -160,12 +172,15 @@ public class App extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Preencha o campo título!");
         } else {
             if(editoraLivro.equals("")){
-                 this.servicoLivro.Cadastrar(tituloLivro, autorLivro);
+                 cadastrado = this.servicoLivro.Cadastrar(tituloLivro, autorLivro);
             }
             else{
-                this.servicoLivro.Cadastrar(tituloLivro, autorLivro, editoraLivro);
+                cadastrado = this.servicoLivro.Cadastrar(tituloLivro, autorLivro, editoraLivro);
             }
-            JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+            if(cadastrado)
+                JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+            else
+                JOptionPane.showMessageDialog(null, "Erro: Livro já cadastrado!");
             removeFromWindowMenuGroup();
             livrosWindow();
         }
@@ -174,17 +189,53 @@ public class App extends javax.swing.JFrame {
     private void btnAtLivroActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
-        String tituloLivro = this.inputTituloAtLivro.getText();
+        String nomeAtualLivro = this.inputNomeAtualLivro.getText();
+        String nomeNovoLivro = this.inputNomeNovoLivro.getText();
+        boolean encontrado;
 
-        if (tituloLivro.equals("")) {
-            JOptionPane.showMessageDialog(null, "Preencha o campo autor!");
-        } else {
-            JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+        if (nomeAtualLivro.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o nome atual!");
+        } 
+        else if (nomeNovoLivro.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o novo nome!");
+        }
+        else {
+            encontrado = this.servicoLivro.Atualizar(nomeAtualLivro, nomeNovoLivro);
+            if (encontrado){
+                JOptionPane.showMessageDialog(null, "Atualizado com sucesso!");
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Erro: Livro não encontrado!");
+            }
             removeFromWindowMenuGroup();
             livrosWindow();
         }
+        
     }
 
+    private void btnRemLivroActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+
+        String nomeLivro = this.inputTituloRemLivro.getText();
+        boolean encontrado;
+
+        if (nomeLivro.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o nome do livro!");
+        } 
+        else {
+            encontrado = this.servicoLivro.Remover(nomeLivro);
+            if (encontrado){
+                JOptionPane.showMessageDialog(null, "Removido com sucesso!");
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Erro: Livro não encontrado!");
+            }
+            removeFromWindowMenuGroup();
+            livrosWindow();
+        }
+        
+    }
+    
     /*Botões de ações dos autores*/
 
     private void btnAutoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAutoresActionPerformed
@@ -204,21 +255,91 @@ public class App extends javax.swing.JFrame {
         removeFromWindowMenuGroup();
         autorVisuWindow();
     }
+    
+    private void btnAutorAtActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        autorAtWindow();
+    }
 
+    private void btnAutorRemActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        autorRemWindow();
+    }
+    
     private void btnCadAutorActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
         String nomeAutor = this.inputNomeAutor.getText();
+        boolean cadastrado;
 
         if (nomeAutor.equals("")) {
             JOptionPane.showMessageDialog(null, "Preencha o campo autor!");
         } 
         else {
-            JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+            
+            cadastrado = this.servicoAutor.Cadastrar(nomeAutor);
+            
+            if(cadastrado)
+                JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+            else
+                JOptionPane.showMessageDialog(null, "Erro: Autor já cadastrado!");
             removeFromWindowMenuGroup();
             autoresWindow();
         }
 
+    }
+    
+    private void btnAtAutorActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+
+        String nomeAtualAutor = this.inputNomeAtualAutor.getText();
+        String nomeNovoAutor = this.inputNomeNovoAutor.getText();
+        boolean encontrado;
+
+        if (nomeAtualAutor.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o nome atual!");
+        } 
+        else if (nomeNovoAutor.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o novo nome!");
+        }
+        else {
+            encontrado = this.servicoAutor.Atualizar(nomeAtualAutor, nomeNovoAutor);
+            if (encontrado){
+                JOptionPane.showMessageDialog(null, "Atualizado com sucesso!");
+                this.servicoLivro.AtualizarAutor(nomeAtualAutor, nomeNovoAutor);
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Erro: Autor não encontrado!");
+            }
+            removeFromWindowMenuGroup();
+            autoresWindow();
+        }
+        
+    }
+    
+    private void btnRemAutorActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+
+        String nomeAutor = this.inputTituloRemAutor.getText();
+        boolean encontrado;
+
+        if (nomeAutor.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o nome do autor!");
+        } 
+        else {
+            encontrado = this.servicoAutor.Remover(nomeAutor);
+            if (encontrado){
+                JOptionPane.showMessageDialog(null, "Removido com sucesso!");
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Erro: Autor não encontrado!");
+            }
+            removeFromWindowMenuGroup();
+            autoresWindow();
+        }
+        
     }
     
     /*Botões de ações das editoras*/
@@ -229,12 +350,113 @@ public class App extends javax.swing.JFrame {
         editorasWindow();
     }//GEN-LAST:event_btnEditorasActionPerformed
 
+    private void btnEditoraCadActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        editoraCadWindow();
+    }
+    
+    private void btnEditoraVisuActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        editoraVisuWindow();
+    }
+    
+    private void btnEditoraAtActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        editoraAtWindow();
+    }
+   
+    private void btnEditoraRemActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        editoraRemWindow();
+    }
+    
+    private void btnCadEditoraActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        // TODO add your handling code here:
+
+        String nomeEditora = this.inputNomeEditora.getText();
+        boolean cadastrado;
+
+        if (nomeEditora.equals("")) {
+            JOptionPane.showMessageDialog(null, "Preencha o campo autor!");
+        } 
+        else {
+            
+            cadastrado = this.servicoEditora.Cadastrar(nomeEditora);
+            
+            if(cadastrado)
+                JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+            else
+                JOptionPane.showMessageDialog(null, "Erro: Editora já cadastrada!");
+            removeFromWindowMenuGroup();
+            editorasWindow();
+        }
+    }
+    
+    private void btnAtEditoraActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+
+        String nomeAtual = this.inputNomeAtualEditora.getText();
+        String nomeNovo = this.inputNomeNovoEditora.getText();
+        boolean encontrado;
+
+        if (nomeAtual.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o nome atual!");
+        } 
+        else if (nomeNovo.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o novo nome!");
+        }
+        else {
+            encontrado = this.servicoEditora.Atualizar(nomeAtual, nomeNovo);
+            if (encontrado){
+                JOptionPane.showMessageDialog(null, "Atualizado com sucesso!");
+                this.servicoLivro.AtualizarEditora(nomeAtual, nomeNovo);
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Erro: Editora não encontrada!");
+            }
+            removeFromWindowMenuGroup();
+            editorasWindow();
+        }
+        
+    }
+    
+    private void btnRemEditoraActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+
+        String nomeEditora = this.inputTituloRemEditora.getText();
+        boolean encontrado;
+        
+        if (nomeEditora.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o nome da editora!");
+        } 
+        else {
+            encontrado = this.servicoEditora.Remover(nomeEditora);
+            if (encontrado){
+                JOptionPane.showMessageDialog(null, "Removido com sucesso!");
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Erro: Editora não encontrada!");
+            }
+            removeFromWindowMenuGroup();
+            editorasWindow();
+        }
+        
+    }
+    
+    
+    /*Botões Locação*/
+    
     private void btnLocacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLocacaoActionPerformed
         // TODO add your handling code here:
         removeFromWindowMenuGroup();
         locacaoWindow();
     }//GEN-LAST:event_btnLocacaoActionPerformed
-
+    
     private void btnEmprestimoActionPerformed(java.awt.event.ActionEvent evt) {                                           
         // TODO add your handling code here:
         removeFromWindowMenuGroup();
@@ -247,33 +469,127 @@ public class App extends javax.swing.JFrame {
         reservaWindow();
     }  
     
-    private void btnCadEditoraActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnSolicitarLocacaoActionPerformed(java.awt.event.ActionEvent evt, String locacao) {                                           
         // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        solicitarLocacaoWindow(locacao);
+    }      
+    
+    private void btnHistoricoLocacaoActionPerformed(java.awt.event.ActionEvent evt, String locacao) {                                           
+        // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        historicoLocacaoWindow(locacao);
+    }      
+    
+    private void btnCancelarLocacaoActionPerformed(java.awt.event.ActionEvent evt, String locacao) {                                           
+        // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        cancelarLocacaoWindow(locacao);
+    }      
+    
+    private void btnAcompanharLocacaoActionPerformed(java.awt.event.ActionEvent evt, String locacao) {                                           
+        // TODO add your handling code here:
+        removeFromWindowMenuGroup();
+        acompanharLocacaoWindow(locacao);
+    }      
+    
+    //Empréstimo
+    
+    private void btnSolicitarEmprestimoActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
-        String nomeEditora = this.inputNomeEditora.getText();
+        String titulo = this.inputNomeLivroSolicitar.getText();
+        boolean encontrado;
 
-        if (nomeEditora.equals("")) {
-            JOptionPane.showMessageDialog(null, "Preencha o campo autor!");
+        if (titulo.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o título do livro!");
         } 
         else {
-            JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+            encontrado = this.locacaoEmprestimo.SolicitarLocacao(titulo, this.servicoLivro);
+            if (encontrado){
+                JOptionPane.showMessageDialog(null, "Emprestimo solicitado!");
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Erro: Livro não encontrado!");
+            }
             removeFromWindowMenuGroup();
-            editorasWindow();
+            emprestimoWindow();
         }
+        
     }
     
-    private void btnEditoraCadActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnCancelarEmprestimoActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        removeFromWindowMenuGroup();
-        editoraCadWindow();
+
+        String titulo = this.inputNomeLivroCancelar.getText();
+        boolean encontrado;
+
+        if (titulo.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o título do livro!");
+        } 
+        else {
+            encontrado = this.locacaoEmprestimo.SolicitarLocacao(titulo, this.servicoLivro);
+            if (encontrado){
+                JOptionPane.showMessageDialog(null, "Emprestimo cancelado!");
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Erro: Nenhum emprestimo solicitado para este livro!");
+            }
+            removeFromWindowMenuGroup();
+            emprestimoWindow();
+        }
+        
     }
     
-    private void btnEditoraVisuActionPerformed(java.awt.event.ActionEvent evt) {
+    //Reserva
+    
+    private void btnSolicitarReservaActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        removeFromWindowMenuGroup();
-        editoraVisuWindow();
+
+        String titulo= this.inputNomeLivroSolicitar.getText();
+        boolean encontrado;
+
+        if (titulo.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o título do livro!");
+        } 
+        else {
+            encontrado = this.locacaoReserva.SolicitarLocacao(titulo, this.servicoLivro);
+            if (encontrado) {
+                JOptionPane.showMessageDialog(null, "Reserva solicitada!");
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Erro: Livro não encontrado!");
+            }
+            removeFromWindowMenuGroup();
+            reservaWindow();
+        }
+        
     }
+    
+    private void btnCancelarReservaActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+
+        String titulo= this.inputNomeLivroCancelar.getText();
+        boolean encontrado;
+
+        if (titulo.equals("")) {
+            JOptionPane.showMessageDialog(null, "Digite o título do livro!");
+        } 
+        else {
+            encontrado = this.locacaoReserva.SolicitarLocacao(titulo, this.servicoLivro);
+            if (encontrado){
+                JOptionPane.showMessageDialog(null, "Reserva cancelada!");
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Erro: Nenhuma reserva solicitada para este livro!");
+            }
+            removeFromWindowMenuGroup();
+            reservaWindow();
+        }
+        
+    }
+    
+    /*Botões de voltar*/
     
     private void voltarMenuPrincActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
@@ -350,6 +666,9 @@ public class App extends javax.swing.JFrame {
         });
         
         this.btnLivroRem.setText("Remover Livro");
+        btnLivroRem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnLivroRemActionPerformed(evt);
+        });
         
         this.btnLivroVisu.setText("Visualizar Livro");
         btnLivroVisu.addActionListener((java.awt.event.ActionEvent evt) -> {
@@ -502,6 +821,7 @@ public class App extends javax.swing.JFrame {
         labelExibirLivro = new javax.swing.JLabel();
         areaTextExibirLivro = new javax.swing.JTextArea(15, 70);
         
+        areaTextExibirLivro.setFont(new java.awt.Font("Courier New", 1, 12));
         
         scrollBarExibirLivro = new javax.swing.JScrollPane(areaTextExibirLivro);
         
@@ -510,11 +830,13 @@ public class App extends javax.swing.JFrame {
         scrollBarExibirLivro.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollBarExibirLivro.setBounds(50, 30, 500, 100);
         
-        String listaLivros = "";
+        String listaLivros;
         
         labelExibirLivro.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         labelExibirLivro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelExibirLivro.setText("Visualizar Livros");
+        
+        listaLivros = this.servicoLivro.Visualizar();
         
         areaTextExibirLivro.append(listaLivros);
         areaTextExibirLivro.setEditable(false);
@@ -557,12 +879,14 @@ public class App extends javax.swing.JFrame {
     
     public void livroAtWindow(){
         labelAtLivro = new javax.swing.JLabel();
-        labelTituloAtLivro = new javax.swing.JLabel();
-        inputTituloAtLivro = new javax.swing.JTextField();
+        labelNomeNovoLivro = new javax.swing.JLabel();
+        labelNomeAtualLivro = new javax.swing.JLabel();
+        inputNomeNovoLivro = new javax.swing.JTextField();
+        inputNomeAtualLivro = new javax.swing.JTextField();
         
         btnAtLivro = new javax.swing.JButton();
         
-        btnAtLivro.setText("Procurar");
+        btnAtLivro.setText("Atualizar");
         btnAtLivro.addActionListener((java.awt.event.ActionEvent evt) -> {
             btnAtLivroActionPerformed(evt);
         });
@@ -571,8 +895,11 @@ public class App extends javax.swing.JFrame {
         labelAtLivro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelAtLivro.setText("Atualizar Livro");
         
-        labelTituloAtLivro.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        labelTituloAtLivro.setText("Título");
+        labelNomeAtualLivro.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelNomeAtualLivro.setText("Nome atual do livro:");
+        
+        labelNomeNovoLivro.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelNomeNovoLivro.setText("Nome novo do livro:");
         
         javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
         tela.setLayout(telaLayout);
@@ -586,8 +913,10 @@ public class App extends javax.swing.JFrame {
                                         .addGroup(telaLayout.createSequentialGroup()
                                                 .addGap(50, 50, 50)
                                                 .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                        .addComponent(inputTituloAtLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                                        .addComponent(labelTituloAtLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                        .addComponent(inputNomeAtualLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelNomeAtualLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                        .addComponent(inputNomeNovoLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelNomeNovoLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
                                                 ).addGap(50, 50, 50))
                                         .addGroup(telaLayout.createSequentialGroup()
                                                 .addGap(220, 220, 220)
@@ -601,12 +930,84 @@ public class App extends javax.swing.JFrame {
                                 .addGap(20, 20, 20)
                                 .addComponent(labelAtLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(30, 30, 30)
-                                .addComponent(labelTituloAtLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(40, 40, 40)
-                                .addComponent(inputTituloAtLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(50, 50, 50)
+                                .addComponent(labelNomeAtualLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addComponent(inputNomeAtualLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(45, 45, 45)
+                                .addComponent(labelNomeNovoLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addComponent(inputNomeNovoLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(45, 45, 45)
                                 .addComponent(btnAtLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(70, 70, 70))
+                                .addGap(50, 50, 50))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }
+    
+    public void livroRemWindow(){
+        labelRemLivro = new javax.swing.JLabel();
+        labelTituloRemLivro = new javax.swing.JLabel();
+        inputTituloRemLivro = new javax.swing.JTextField();
+        
+        btnRemLivro = new javax.swing.JButton();
+        
+        btnRemLivro.setText("Remover");
+        btnRemLivro.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnRemLivroActionPerformed(evt);
+        });
+        
+        labelRemLivro.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        labelRemLivro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelRemLivro.setText("Remover Livro");
+        
+        labelTituloRemLivro.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelTituloRemLivro.setText("Título do Livro:");
+        
+        javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
+        tela.setLayout(telaLayout);
+        telaLayout.setHorizontalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addComponent(labelRemLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(50, 50, 50)
+                                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(inputTituloRemLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelTituloRemLivro, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                ).addGap(50, 50, 50))
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(220, 220, 220)
+                                                .addComponent(btnRemLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                )
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        telaLayout.setVerticalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, telaLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(labelRemLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(30, 30, 30)
+                                .addComponent(labelTituloRemLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addComponent(inputTituloRemLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(45, 45, 45)
+                                .addComponent(btnRemLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(50, 50, 50))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -649,7 +1050,15 @@ public class App extends javax.swing.JFrame {
         btnAutorVisu.addActionListener((java.awt.event.ActionEvent evt) -> {
             btnAutorVisuActionPerformed(evt);
         });
+        
+        btnAutorAt.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnAutorAtActionPerformed(evt);
+        });
 
+        btnAutorRem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnAutorRemActionPerformed(evt);
+        });
+        
         javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
         tela.setLayout(telaLayout);
 
@@ -770,6 +1179,7 @@ public class App extends javax.swing.JFrame {
         labelExibirAutor = new javax.swing.JLabel();
         areaTextExibirAutor = new javax.swing.JTextArea(15, 70);
         
+        areaTextExibirAutor.setFont(new java.awt.Font("Courier New", 1, 12));
         
         scrollBarExibirAutor = new javax.swing.JScrollPane(areaTextExibirAutor);
         
@@ -778,13 +1188,15 @@ public class App extends javax.swing.JFrame {
         scrollBarExibirAutor.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollBarExibirAutor.setBounds(50, 30, 500, 100);
         
-        String listaAutor = "";
+        String listaAutores;
         
         labelExibirAutor.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         labelExibirAutor.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelExibirAutor.setText("Visualizar Autores");
         
-        areaTextExibirAutor.append(listaAutor);
+        listaAutores = this.servicoAutor.Visualizar();
+        
+        areaTextExibirAutor.append(listaAutores);
         areaTextExibirAutor.setEditable(false);
         
         javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
@@ -806,6 +1218,153 @@ public class App extends javax.swing.JFrame {
                                 .addComponent(labelExibirAutor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(30, 30, 30)
                                 .addComponent(scrollBarExibirAutor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(50, 50, 50))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }
+    
+    public void autorAtWindow(){
+        labelAtAutor = new javax.swing.JLabel();
+        labelNomeNovoAutor = new javax.swing.JLabel();
+        labelNomeAtualAutor = new javax.swing.JLabel();
+        inputNomeNovoAutor = new javax.swing.JTextField();
+        inputNomeAtualAutor = new javax.swing.JTextField();
+        
+        btnAtAutor = new javax.swing.JButton();
+        
+        btnAtAutor.setText("Atualizar");
+        btnAtAutor.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnAtAutorActionPerformed(evt);
+        });
+        
+        labelAtAutor.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        labelAtAutor.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelAtAutor.setText("Atualizar Autor");
+        
+        labelNomeAtualAutor.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelNomeAtualAutor.setText("Nome atual do autor:");
+        
+        labelNomeNovoAutor.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelNomeNovoAutor.setText("Nome novo do autor:");
+        
+        javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
+        tela.setLayout(telaLayout);
+        telaLayout.setHorizontalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addComponent(labelAtAutor, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(50, 50, 50)
+                                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(inputNomeAtualAutor, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelNomeAtualAutor, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                        .addComponent(inputNomeNovoAutor, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelNomeNovoAutor, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                ).addGap(50, 50, 50))
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(220, 220, 220)
+                                                .addComponent(btnAtAutor, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                )
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        telaLayout.setVerticalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, telaLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(labelAtAutor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(30, 30, 30)
+                                .addComponent(labelNomeAtualAutor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addComponent(inputNomeAtualAutor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(45, 45, 45)
+                                .addComponent(labelNomeNovoAutor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addComponent(inputNomeNovoAutor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(45, 45, 45)
+                                .addComponent(btnAtAutor, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(50, 50, 50))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }
+    
+    public void autorRemWindow(){
+        labelRemAutor = new javax.swing.JLabel();
+        labelTituloRemAutor = new javax.swing.JLabel();
+        inputTituloRemAutor = new javax.swing.JTextField();
+        
+        btnRemAutor = new javax.swing.JButton();
+        
+        btnRemAutor.setText("Remover");
+        btnRemAutor.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnRemAutorActionPerformed(evt);
+        });
+        
+        labelRemAutor.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        labelRemAutor.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelRemAutor.setText("Remover Autor");
+        
+        labelTituloRemAutor.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelTituloRemAutor.setText("Nome do Autor:");
+        
+        javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
+        tela.setLayout(telaLayout);
+        telaLayout.setHorizontalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addComponent(labelRemAutor, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(50, 50, 50)
+                                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(inputTituloRemAutor, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelTituloRemAutor, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                ).addGap(50, 50, 50))
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(220, 220, 220)
+                                                .addComponent(btnRemAutor, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                )
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        telaLayout.setVerticalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, telaLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(labelRemAutor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(30, 30, 30)
+                                .addComponent(labelTituloRemAutor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addComponent(inputTituloRemAutor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(45, 45, 45)
+                                .addComponent(btnRemAutor, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(50, 50, 50))
         );
 
@@ -849,6 +1408,14 @@ public class App extends javax.swing.JFrame {
 
         btnEditoraVisu.addActionListener((java.awt.event.ActionEvent evt) -> {
             btnEditoraVisuActionPerformed(evt);
+        });
+        
+        btnEditoraAt.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnEditoraAtActionPerformed(evt);
+        });
+        
+        btnEditoraRem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnEditoraRemActionPerformed(evt);
         });
         
         javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
@@ -971,6 +1538,7 @@ public class App extends javax.swing.JFrame {
         labelExibirEditora = new javax.swing.JLabel();
         areaTextExibirEditora = new javax.swing.JTextArea(15, 70);
         
+        areaTextExibirEditora.setFont(new java.awt.Font("Courier New", 1, 12));
         
         scrollBarExibirEditora = new javax.swing.JScrollPane(areaTextExibirEditora);
         
@@ -979,13 +1547,15 @@ public class App extends javax.swing.JFrame {
         scrollBarExibirEditora.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollBarExibirEditora.setBounds(50, 30, 500, 100);
         
-        String listaAutor = "";
+        String listaEditoras;
         
         labelExibirEditora.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         labelExibirEditora.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelExibirEditora.setText("Visualizar Editoras");
         
-        areaTextExibirEditora.append(listaAutor);
+        listaEditoras = this.servicoEditora.Visualizar();
+        
+        areaTextExibirEditora.append(listaEditoras);
         areaTextExibirEditora.setEditable(false);
         
         javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
@@ -1007,6 +1577,153 @@ public class App extends javax.swing.JFrame {
                                 .addComponent(labelExibirEditora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(30, 30, 30)
                                 .addComponent(scrollBarExibirEditora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(50, 50, 50))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }
+    
+    public void editoraAtWindow(){
+        labelAtEditora = new javax.swing.JLabel();
+        labelNomeNovoEditora = new javax.swing.JLabel();
+        labelNomeAtualEditora = new javax.swing.JLabel();
+        inputNomeNovoEditora = new javax.swing.JTextField();
+        inputNomeAtualEditora = new javax.swing.JTextField();
+        
+        btnAtEditora = new javax.swing.JButton();
+        
+        btnAtEditora.setText("Atualizar");
+        btnAtEditora.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnAtEditoraActionPerformed(evt);
+        });
+        
+        labelAtEditora.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        labelAtEditora.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelAtEditora.setText("Atualizar Editora");
+        
+        labelNomeAtualEditora.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelNomeAtualEditora.setText("Nome atual da Editora:");
+        
+        labelNomeNovoEditora.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelNomeNovoEditora.setText("Nome novo da Editora:");
+        
+        javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
+        tela.setLayout(telaLayout);
+        telaLayout.setHorizontalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addComponent(labelAtEditora, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(50, 50, 50)
+                                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(inputNomeAtualEditora, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelNomeAtualEditora, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                        .addComponent(inputNomeNovoEditora, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelNomeNovoEditora, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                ).addGap(50, 50, 50))
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(220, 220, 220)
+                                                .addComponent(btnAtEditora, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                )
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        telaLayout.setVerticalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, telaLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(labelAtEditora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(30, 30, 30)
+                                .addComponent(labelNomeAtualEditora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addComponent(inputNomeAtualEditora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(45, 45, 45)
+                                .addComponent(labelNomeNovoEditora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addComponent(inputNomeNovoEditora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(45, 45, 45)
+                                .addComponent(btnAtEditora, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(50, 50, 50))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }
+    
+    public void editoraRemWindow(){
+        labelRemEditora = new javax.swing.JLabel();
+        labelTituloRemEditora = new javax.swing.JLabel();
+        inputTituloRemEditora = new javax.swing.JTextField();
+        
+        btnRemEditora = new javax.swing.JButton();
+        
+        btnRemEditora.setText("Remover");
+        btnRemEditora.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnRemEditoraActionPerformed(evt);
+        });
+        
+        labelRemEditora.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        labelRemEditora.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelRemEditora.setText("Remover Editora");
+        
+        labelTituloRemEditora.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelTituloRemEditora.setText("Nome da Editora:");
+        
+        javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
+        tela.setLayout(telaLayout);
+        telaLayout.setHorizontalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addComponent(labelRemEditora, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(50, 50, 50)
+                                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(inputTituloRemEditora, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelTituloRemEditora, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                ).addGap(50, 50, 50))
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(220, 220, 220)
+                                                .addComponent(btnRemEditora, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                )
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        telaLayout.setVerticalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, telaLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(labelRemEditora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(30, 30, 30)
+                                .addComponent(labelTituloRemEditora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addComponent(inputTituloRemEditora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(45, 45, 45)
+                                .addComponent(btnRemEditora, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(50, 50, 50))
         );
 
@@ -1101,9 +1818,23 @@ public class App extends javax.swing.JFrame {
         this.voltarLocacao = new javax.swing.JButton();
 
         this.btnSolicitarEmprestimo.setText("Solicitar Emprestimo");
+        btnSolicitarEmprestimo.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnSolicitarLocacaoActionPerformed(evt, "Empréstimo");
+        });
+        
         this.btnHistoricoEmprestimo.setText("Historico de Emprestimos");
+        btnHistoricoEmprestimo.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnHistoricoLocacaoActionPerformed(evt, "Empréstimo");
+        });
         this.btnAcompanharEmprestimo.setText("Acompanhar Emprestimo");
+        btnAcompanharEmprestimo.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnAcompanharLocacaoActionPerformed(evt, "Empréstimo");
+        });
+        
         this.btnCancelarEmprestimo.setText("Cancelar Emprestimo");
+        btnCancelarEmprestimo.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnCancelarLocacaoActionPerformed(evt, "Empréstimo");
+        });
         
         this.voltarLocacao.setText("Voltar");
         voltarLocacao.addActionListener((java.awt.event.ActionEvent evt) -> {
@@ -1168,9 +1899,24 @@ public class App extends javax.swing.JFrame {
         this.voltarLocacao = new javax.swing.JButton();
 
         this.btnSolicitarReserva.setText("Solicitar Reserva");
+        btnSolicitarReserva.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnSolicitarLocacaoActionPerformed(evt, "Reserva");
+        });
+        
         this.btnHistoricoReserva.setText("Historico de Reservas");
+        btnHistoricoReserva.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnHistoricoLocacaoActionPerformed(evt, "Reserva");
+        });
+        
         this.btnAcompanharReserva.setText("Acompanhar Reserva");
+        btnAcompanharReserva.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnAcompanharLocacaoActionPerformed(evt, "Reserva");
+        });
+        
         this.btnCancelarReserva.setText("Cancelar Reserva");
+        btnCancelarReserva.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnCancelarLocacaoActionPerformed(evt, "Reserva");
+        });
         
         this.voltarLocacao.setText("Voltar");
         voltarLocacao.addActionListener((java.awt.event.ActionEvent evt) -> {
@@ -1210,6 +1956,286 @@ public class App extends javax.swing.JFrame {
                                 .addGap(45, 45, 45)
                                 .addComponent(voltarLocacao, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(47, 47, 47))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }
+    
+    public void solicitarLocacaoWindow(String locacao) {
+        labelSolicitarLocacao = new javax.swing.JLabel();
+        labelNomeLivroSolicitar = new javax.swing.JLabel();
+        inputNomeLivroSolicitar = new javax.swing.JTextField();
+        
+        btnSolicitarLocacao = new javax.swing.JButton();
+        
+        btnSolicitarLocacao.setText("Solicitar");
+        btnSolicitarLocacao.addActionListener((java.awt.event.ActionEvent evt) -> {
+            if(locacao.equals("Empréstimo"))
+                btnSolicitarEmprestimoActionPerformed(evt);
+            else
+                btnSolicitarReservaActionPerformed(evt);
+        });
+        
+        labelSolicitarLocacao.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        labelSolicitarLocacao.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        
+        if(locacao.equals("Empréstimo"))
+            labelSolicitarLocacao.setText("Solicitar Empréstimo");
+        else
+            labelSolicitarLocacao.setText("Solicitar Reserva");
+        
+        labelNomeLivroSolicitar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelNomeLivroSolicitar.setText("Título do Livro:");
+        
+        javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
+        tela.setLayout(telaLayout);
+        telaLayout.setHorizontalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addComponent(labelSolicitarLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(50, 50, 50)
+                                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(inputNomeLivroSolicitar, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelNomeLivroSolicitar, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                ).addGap(50, 50, 50))
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(220, 220, 220)
+                                                .addComponent(btnSolicitarLocacao, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                )
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        telaLayout.setVerticalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, telaLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(labelSolicitarLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(30, 30, 30)
+                                .addComponent(labelNomeLivroSolicitar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addComponent(inputNomeLivroSolicitar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(45, 45, 45)
+                                .addComponent(btnSolicitarLocacao, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(50, 50, 50))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }
+    
+    public void historicoLocacaoWindow(String locacao) {
+        labelHistoricoLocacao = new javax.swing.JLabel();
+        areaTextHistoricoLocacao = new javax.swing.JTextArea(15, 70);
+        
+        
+        scrollBarHistoricoLocacao = new javax.swing.JScrollPane(areaTextHistoricoLocacao);
+        
+        
+        scrollBarHistoricoLocacao.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollBarHistoricoLocacao.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollBarHistoricoLocacao.setBounds(50, 30, 500, 100);
+        
+        String listaLivros;
+        
+        labelHistoricoLocacao.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        labelHistoricoLocacao.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        
+        if(locacao.equals("Empréstimo")){
+            labelHistoricoLocacao.setText("Historico de Empréstimos");
+            listaLivros = this.locacaoEmprestimo.VerHistorico();
+        }
+        else{
+            labelHistoricoLocacao.setText("Historico de Reservas");
+            listaLivros = this.locacaoReserva.VerHistorico();
+        }
+        
+        areaTextHistoricoLocacao.append(listaLivros);
+        areaTextHistoricoLocacao.setEditable(false);
+        
+        javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
+        tela.setLayout(telaLayout);
+        telaLayout.setHorizontalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addComponent(labelHistoricoLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addGap(50, 50, 50)
+                                .addComponent(scrollBarHistoricoLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                .addGap(60, 60, 60))
+        );
+        telaLayout.setVerticalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, telaLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(labelHistoricoLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(30, 30, 30)
+                                .addComponent(scrollBarHistoricoLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(50, 50, 50))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }
+    
+    public void cancelarLocacaoWindow(String locacao) {
+        labelCancelarLocacao = new javax.swing.JLabel();
+        labelNomeLivroCancelar = new javax.swing.JLabel();
+        inputNomeLivroCancelar = new javax.swing.JTextField();
+        
+        btnCancelarLocacao = new javax.swing.JButton();
+        
+        btnCancelarLocacao.setText("Confirmar");
+        btnCancelarLocacao.addActionListener((java.awt.event.ActionEvent evt) -> {
+            if(locacao.equals("Empréstimo"))
+                btnCancelarEmprestimoActionPerformed(evt);
+            else
+                btnCancelarReservaActionPerformed(evt);
+        });
+        
+        labelCancelarLocacao.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        labelCancelarLocacao.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        
+        if(locacao.equals("Empréstimo"))
+            labelCancelarLocacao.setText("Cancelar Empréstimo");
+        else
+            labelCancelarLocacao.setText("Cancelar Reserva");
+        
+        labelNomeLivroCancelar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        labelNomeLivroCancelar.setText("Título do Livro:");
+        
+        javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
+        tela.setLayout(telaLayout);
+        telaLayout.setHorizontalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addComponent(labelCancelarLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(50, 50, 50)
+                                                .addGroup(telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(inputNomeLivroCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                                        .addComponent(labelNomeLivroCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                                ).addGap(50, 50, 50))
+                                        .addGroup(telaLayout.createSequentialGroup()
+                                                .addGap(220, 220, 220)
+                                                .addComponent(btnCancelarLocacao, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                )
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        telaLayout.setVerticalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, telaLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(labelCancelarLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(30, 30, 30)
+                                .addComponent(labelNomeLivroCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(25, 25, 25)
+                                .addComponent(inputNomeLivroCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(45, 45, 45)
+                                .addComponent(btnCancelarLocacao, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(50, 50, 50))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }
+    
+    public void acompanharLocacaoWindow(String locacao){
+        labelAcompanharLocacao = new javax.swing.JLabel();
+        areaTextAcompanharLocacao = new javax.swing.JTextArea(15, 70);
+        
+        
+        scrollBarAcompanharLocacao = new javax.swing.JScrollPane(areaTextAcompanharLocacao);
+        
+        
+        scrollBarAcompanharLocacao.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollBarAcompanharLocacao.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollBarAcompanharLocacao.setBounds(50, 30, 500, 100);
+        
+        String locacaoAtual;
+        
+        labelAcompanharLocacao.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        labelAcompanharLocacao.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        
+        if(locacao.equals("Empréstimo")){
+            labelAcompanharLocacao.setText("Acompanhar Empréstimo atual");
+            locacaoAtual = "Título: " + this.locacaoEmprestimo.AcompanharLocacao().getTitulo();
+        }
+        else {
+            labelAcompanharLocacao.setText("Acompanhar Reserva atual");
+            locacaoAtual = "Título: " + this.locacaoReserva.AcompanharLocacao().getTitulo();
+        }
+        
+        areaTextAcompanharLocacao.append(locacaoAtual);
+        areaTextAcompanharLocacao.setEditable(false);
+        
+        javax.swing.GroupLayout telaLayout = new javax.swing.GroupLayout(tela);
+        tela.setLayout(telaLayout);
+        telaLayout.setHorizontalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addComponent(labelAcompanharLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
+                        .addGroup(telaLayout.createSequentialGroup()
+                                .addGap(50, 50, 50)
+                                .addComponent(scrollBarAcompanharLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                .addGap(60, 60, 60))
+        );
+        telaLayout.setVerticalGroup(
+                telaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, telaLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(labelAcompanharLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(30, 30, 30)
+                                .addComponent(scrollBarAcompanharLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(50, 50, 50))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1306,6 +2332,28 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JButton btnHistoricoReserva;
     private javax.swing.JButton btnCancelarReserva;
     
+    //Solicitar Locação
+    private javax.swing.JLabel labelSolicitarLocacao;
+    private javax.swing.JLabel labelNomeLivroSolicitar;
+    private javax.swing.JTextField inputNomeLivroSolicitar;
+    private javax.swing.JButton btnSolicitarLocacao;
+    
+    //Historico Locação
+    private javax.swing.JLabel labelHistoricoLocacao;
+    private javax.swing.JScrollPane scrollBarHistoricoLocacao;
+    private javax.swing.JTextArea areaTextHistoricoLocacao;
+    
+    //Cancelar Locação
+    private javax.swing.JLabel labelCancelarLocacao;
+    private javax.swing.JLabel labelNomeLivroCancelar;
+    private javax.swing.JTextField inputNomeLivroCancelar;
+    private javax.swing.JButton btnCancelarLocacao;
+    
+    //Acompanhar Locação
+    private javax.swing.JLabel labelAcompanharLocacao;
+    private javax.swing.JScrollPane scrollBarAcompanharLocacao;
+    private javax.swing.JTextArea areaTextAcompanharLocacao;
+    
     //Outros elementos
     private javax.swing.JButton voltarMenuPrinc;
 
@@ -1327,9 +2375,17 @@ public class App extends javax.swing.JFrame {
     
     //Atualizar
     private javax.swing.JLabel labelAtLivro;
-    private javax.swing.JLabel labelTituloAtLivro;
-    private javax.swing.JTextField inputTituloAtLivro;
+    private javax.swing.JLabel labelNomeAtualLivro;
+    private javax.swing.JLabel labelNomeNovoLivro;
+    private javax.swing.JTextField inputNomeNovoLivro;
+    private javax.swing.JTextField inputNomeAtualLivro;
     private javax.swing.JButton btnAtLivro;
+    
+    //Remover
+    private javax.swing.JLabel labelRemLivro;
+    private javax.swing.JLabel labelTituloRemLivro;
+    private javax.swing.JTextField inputTituloRemLivro;
+    private javax.swing.JButton btnRemLivro;
     
     /*Autor opções*/
     //Cadastrar
@@ -1343,6 +2399,20 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollBarExibirAutor;
     private javax.swing.JTextArea areaTextExibirAutor;
     
+    //Atualizar
+    private javax.swing.JLabel labelAtAutor;
+    private javax.swing.JLabel labelNomeAtualAutor;
+    private javax.swing.JLabel labelNomeNovoAutor;
+    private javax.swing.JTextField inputNomeNovoAutor;
+    private javax.swing.JTextField inputNomeAtualAutor;
+    private javax.swing.JButton btnAtAutor;
+    
+    //Remover
+    private javax.swing.JLabel labelRemAutor;
+    private javax.swing.JLabel labelTituloRemAutor;
+    private javax.swing.JTextField inputTituloRemAutor;
+    private javax.swing.JButton btnRemAutor;
+    
     /*Editora opções*/
     //Cadastrar
     private javax.swing.JTextField inputNomeEditora;
@@ -1355,8 +2425,24 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollBarExibirEditora;
     private javax.swing.JTextArea areaTextExibirEditora;
     
+    //Atualizar
+    private javax.swing.JLabel labelAtEditora;
+    private javax.swing.JLabel labelNomeAtualEditora;
+    private javax.swing.JLabel labelNomeNovoEditora;
+    private javax.swing.JTextField inputNomeNovoEditora;
+    private javax.swing.JTextField inputNomeAtualEditora;
+    private javax.swing.JButton btnAtEditora;
+    
+    //Remover
+    private javax.swing.JLabel labelRemEditora;
+    private javax.swing.JLabel labelTituloRemEditora;
+    private javax.swing.JTextField inputTituloRemEditora;
+    private javax.swing.JButton btnRemEditora;
+    
     /*Serviços Objetos*/
     private ServicoAutor servicoAutor = new ServicoAutor();
     private ServicoEditora servicoEditora = new ServicoEditora();
     private ServicoLivro servicoLivro = new ServicoLivro(servicoAutor, servicoEditora);
+    private LocacaoEmprestimo locacaoEmprestimo = new LocacaoEmprestimo();
+    private LocacaoReserva locacaoReserva = new LocacaoReserva();
 }

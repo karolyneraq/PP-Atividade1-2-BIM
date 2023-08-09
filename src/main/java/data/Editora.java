@@ -9,11 +9,15 @@ public class Editora {
 	
 	public Editora(String nome) {
 		this.nome = nome;
-		this.livros = new ArrayList<>();
+		this.livros = new ArrayList<Livro>();
 	}
 	
 	public String getNome(){
 		return this.nome;
+	}
+	
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 	
 	public ArrayList<Livro> getLivros() {
@@ -30,7 +34,7 @@ public class Editora {
 		livros.remove(livro);
 	}
 	
-	public void livrosPublicados() {
+	public void listarLivros() {
 		
 		if (livros.size() > 0){
 			
@@ -47,5 +51,4 @@ public class Editora {
 			System.out.println("A editora " + this.getNome() + " ainda não publicou nenhum livro");
 		}
 	}
-	
 }

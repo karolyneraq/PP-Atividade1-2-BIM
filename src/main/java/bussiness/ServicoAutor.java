@@ -6,7 +6,7 @@ import data.Autor;
 import data.Persistencia;
 
 public class ServicoAutor extends Servico{
-    private ArrayList<Autor> autores;
+    private final ArrayList<Autor> autores = new ArrayList<>();
     
     public ServicoAutor(){}
 
@@ -22,6 +22,7 @@ public class ServicoAutor extends Servico{
         return true;
     }
 
+    @Override
     public boolean Atualizar(String nomeAtual, String novoNome){
         for (Autor autor : this.autores){
             if (autor.getNome().equals(nomeAtual)){
@@ -34,6 +35,7 @@ public class ServicoAutor extends Servico{
         return false;
     }
 
+    @Override
     public boolean Remover(String nome){
         for (Autor autor : this.autores){
             if (autor.getNome().equals(nome)){
@@ -46,12 +48,18 @@ public class ServicoAutor extends Servico{
         return false;
     }
 
-    public ArrayList<Autor> Visualizar(){
-        return this.autores;
+    public String Visualizar(){
+        String catalogo = String.format("%20s|%20s\n" , "    AUTOR: ", "    QNTD. LIVROS:");
+        catalogo += "\n";
+        
+        for (Autor a : this.autores){
+            catalogo += String.format("%-20s|%-20s\n" , a.getNome(), a.getLivros().size());
+        }
+        return catalogo;
     }
 
     public ArrayList<Autor> Buscar(String busca){
-        ArrayList<Autor> autoresBuscados = new ArrayList<Autor>();
+        ArrayList<Autor> autoresBuscados = new ArrayList<>();
         
         for (Autor autor : autores){
             if (autor.getNome().contains(busca)){
@@ -60,6 +68,10 @@ public class ServicoAutor extends Servico{
         }
 
         return autoresBuscados;
+    }
+
+    public ArrayList<Autor> GetAutores(){
+        return this.autores;
     }
 
     public void Carregar(){

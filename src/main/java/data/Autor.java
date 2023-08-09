@@ -8,7 +8,7 @@ public class Autor {
 
 	public Autor(String nome) {
 		this.nome = nome;
-		this.livros = new ArrayList<>();
+		this.livros = new ArrayList<Livro>();
 	}
 	
 	public void setNome(String nome) {
@@ -23,20 +23,20 @@ public class Autor {
 		return livros;
 	}
 
-	public void adicionarLivro(String nome) {
-		livros.add(new Livro(nome, this));
-	}
-	
 	public Livro adicionarLivro(String nome) {
-		Livro livro = new Livro(nome, this);
+    Livro livro = new Livro(nome, this);
 		livros.add(livro);
-		return livro;
+    return livro;
 	}
 	
 	public Livro adicionarLivroEditora(String nome, Editora editora) {
-		Livro livro = new Livro(nome, this, editora);
-		livros.add(livro);
-		return livro;
+    Livro livro = new Livro(nome, this, editora);
+    livros.add(livro);
+    return livro;
+	}
+
+	public void removerLivro(Livro livro) {
+		livros.remove(livro);
 	}
 
 	public void listarLivros(){

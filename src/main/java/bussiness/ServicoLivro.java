@@ -8,9 +8,9 @@ import data.Editora;
 import data.Persistencia;
 
 public class ServicoLivro extends Servico{
-    private ArrayList<Livro> livros;
-    private ServicoAutor sa;
-    private ServicoEditora se;
+    private final ArrayList<Livro> livros = new ArrayList<>();
+    private final ServicoAutor sa;
+    private final ServicoEditora se;
 
     public ServicoLivro(ServicoAutor sa, ServicoEditora se){
         this.sa = sa;
@@ -26,7 +26,7 @@ public class ServicoLivro extends Servico{
             }
         }
 
-        for (Autor autor : sa.Visualizar()){
+        for (Autor autor : sa.GetAutores()){
             if (autor.getNome().equals(nomeAutor)){
                 autorLivro = autor;
             }
@@ -38,6 +38,7 @@ public class ServicoLivro extends Servico{
         }
         
         livros.add(autorLivro.adicionarLivro(titulo));
+        this.Salvar();
         return true;
     }
 
@@ -51,13 +52,13 @@ public class ServicoLivro extends Servico{
             }
         }
 
-        for (Autor autor : this.sa.Visualizar()){
+        for (Autor autor : this.sa.GetAutores()){
             if (autor.getNome().equals(nomeAutor)){
                 autorLivro = autor;
             }
         }
 
-        for (Editora editora : this.se.Visualizar()){
+        for (Editora editora : this.se.GetEditoras()){
             if (editora.getNome().equals(nomeEditora)){
                 editoraLivro = editora;
             }
@@ -72,10 +73,12 @@ public class ServicoLivro extends Servico{
             this.se.Cadastrar(nomeEditora);
         }
 
-        autorLivro.adicionarLivroEditora(titulo, editoraLivro);
+        livros.add(autorLivro.adicionarLivroEditora(titulo, editoraLivro));
+        this.Salvar();
         return true;
     }
 
+    @Override
     public boolean Atualizar(String nomeAtual, String novoNome){
         for (Livro livro : this.livros){
             if (livro.getTitulo().equals(nomeAtual)){
@@ -87,7 +90,42 @@ public class ServicoLivro extends Servico{
 
         return false;
     }
+    
+    public void AtualizarAutor(String nomeAtual, String novoNome) {
+        Autor autor = null;
+        
+        for (Autor a : sa.GetAutores()){
+            if (a.getNome().equals(novoNome)){
+                autor = a;
+            }
+        }
+        
+        for (Livro livro : this.livros) {
+            if (livro.getAutor().getNome().equals(nomeAtual)){
+                livro.setAutor(autor);
+                this.Salvar();
+            }
+        }
+    }
+    
+    public void AtualizarEditora(String nomeAtual, String novoNome){
+        Editora editora = null;
+        
+        for (Editora e : se.GetEditoras()){
+            if (e.getNome().equals(novoNome)){
+                editora = e;
+            }
+        }
+        
+        for (Livro livro : livros) {
+            if (livro.getEditora().getNome().equals(nomeAtual)){
+                livro.setEditora(editora);
+                this.Salvar();
+            }
+        }
+    }
 
+    @Override
     public boolean Remover(String nome){
         for (Livro livro : this.livros){
             if (livro.getTitulo().equals(nome)){
@@ -101,12 +139,24 @@ public class ServicoLivro extends Servico{
         return false;
     }
 
-    public ArrayList<Livro> Visualizar(){
-        return this.livros;
+    public String Visualizar(){
+        String catalogo = String.format("%-20s|%-20s|%-20s\n" , "    TÍTULO: ", "    AUTOR:", "    EDITORA");
+        catalogo += "\n";
+        
+        for (Livro l : this.livros){
+            if (l.getEditora() == null){
+            catalogo += String.format("%-20s|%-20s\n" , l.getTitulo(), l.getAutor().getNome() );
+            }
+            else{
+            catalogo += String.format("%-20s|%-20s|%-20s\n" , l.getTitulo(), l.getAutor().getNome(), l.getEditora().getNome());
+            }
+            
+        }
+        return catalogo;
     }
 
     public ArrayList<Livro> Buscar(String busca){
-        ArrayList<Livro> livrosBuscados = new ArrayList<Livro>();
+        ArrayList<Livro> livrosBuscados = new ArrayList<>();
         
         for (Livro livro : this.livros){
             if (livro.getTitulo().contains(busca)){
@@ -116,12 +166,17 @@ public class ServicoLivro extends Servico{
 
         return livrosBuscados;
     }
+    
+    public ArrayList<Livro> GetLivros(){
+        return this.livros;
+    }
 
     public void Carregar(){
-        this.livros.addAll(Persistencia.loadLivros(this.sa.Visualizar(), this.se.Visualizar()));
+        this.livros.addAll(Persistencia.loadLivros(this.sa.GetAutores(), this.se.GetEditoras()));
     }
 
     public void Salvar(){
-        Persistencia.saveLivros(this.sa.Visualizar());
+        System.out.println("Salvando");
+        Persistencia.saveLivros(this.livros);
     }
 }

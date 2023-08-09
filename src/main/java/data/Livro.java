@@ -15,18 +15,19 @@ public class Livro {
 		this.titulo = titulo;
 		this.autor = autor;
 		this.setEditora(editora);
+    editora.adicionarLivro(this);
 	}
 
 	public String getTitulo() {
-		return titulo;
+		return this.titulo;
 	}
 
 	public Autor getAutor() {
-		return autor;
+		return this.autor;
 	}
 
 	public Editora getEditora() {
-		return editora;
+		return this.editora;
 	}
 	
 	public void setTitulo(String titulo) {
