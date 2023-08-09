@@ -18,7 +18,10 @@ import bussiness.LocacaoReserva;
 
 /**
  *
- * @author karol
+ * Equipe: 
+ * - Dário Souza Rocha Filho, 2215310006
+ * - Gabriel Machado Moreira, 2215310008
+ * - Raquel Karolyne Carlôtto Santos, 2215310044
  */
 public class App extends javax.swing.JFrame {
 
